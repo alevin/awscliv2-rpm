@@ -1,0 +1,157 @@
+name: Release RPM
+on:
+  workflow_dispatch:
+    schedule:
+      - cron: "43 16 * * *"
+    #push:
+    #  branches: [ main ]
+jobs:
+  all:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Configure git for commit
+        run: |
+          git config user.name "$GITHUB_ACTOR"
+          git config user.email "${GITHUB_REPOSITORY//\//+}+${GITHUB_WORKFLOW// /-}@github.io"
+          if [ -n "$GITHUB_BASE_REF" ]
+          then
+            echo "BASE_REF=$GITHUB_BASE_REF" >> $GITHUB_ENV
+          else
+            echo "BASE_REF=${GITHUB_REF#refs/heads/}" >> $GITHUB_ENV
+          fi
+
+      - name: Check for new installer
+        run: |
+          git rm -q -f --ignore-unmatch -- *.version
+          ./check_for_new_installer | xargs --no-run-if-empty git add
+
+      - name: Rebuild spec file, etc.
+        run: |
+          ./respecit | xargs --no-run-if-empty git add
+          echo "AWS_CLI_VERSION=$(cat aws-cli.version)" >> $GITHUB_ENV
+          echo "AWSCLIV2_RPM_RELEASE=$(cat awscliv2-rpm.release)" >> $GITHUB_ENV
+          echo "AWSCLIV2_RPM_RELEASE_DATE=$(date +%Y%m%d_%H%M)" >> $GITHUB_ENV
+
+      - name: Check for changes to commit
+        id: check_for_changes
+        run: |
+          if ! git diff --cached --name-status --exit-code
+          then
+            echo "installer_has_changed=yes" >> $GITHUB_OUTPUT
+          fi
+          # Force rebuild
+          # echo "installer_has_changed=yes" >> $GITHUB_OUTPUT
+
+      - name: Push updated installer details
+        if: ${{ 'yes' == steps.check_for_changes.outputs.installer_has_changed }}
+        id: commit_changes
+        run: |
+          git commit --file awscliv2-rpm-details.txt
+          git push
+
+        # el7
+
+      - name: Build el7 builder image
+        if: ${{ 'skipped' != steps.commit_changes.conclusion }}
+        id: build_el7_image
+        run: docker-compose build superbuilder
+
+      - name: Build el7 RPM
+        if: ${{ 'skipped' != steps.build_el7_image.conclusion }}
+        id: build_el7_rpm
+        run: |
+          docker-compose run superbuilder ./rebuildit
+          srpm_path=$(find SRPMS -type f -name '*.el7.nosrc.rpm' | head -n1)
+          srpm_name=$(basename "$srpm_path")
+          rpm_path=$(find RPMS -type f -name '*.el7.x86_64.rpm' | head -n1)
+          rpm_name=$(basename "$rpm_path")
+          echo ======================================
+          declare -p {s,}rpm_{path,name}
+          echo ======================================
+          echo "srpm_path=$srpm_path" >> $GITHUB_OUTPUT
+          echo "srpm_name=$srpm_name" >> $GITHUB_OUTPUT
+          echo "rpm_path=$rpm_path" >> $GITHUB_OUTPUT
+          echo "rpm_name=$rpm_name" >> $GITHUB_OUTPUT
+
+      - name: Test el7 RPM
+        if: ${{ 'skipped' != steps.build_el7_rpm.conclusion }}
+        id: test_el7_rpm
+        run: docker-compose run tester ./retestit
+
+      - name: Save bad el7 RPMs
+        if: ${{ 'failure' == steps.test_el7_rpm.conclusion }}
+        uses: actions/upload-artifact@v3
+        with:
+          name: rpms
+          path: "*RPMS**/*.rpm"
+          if-no-files-found: error
+
+        # el8
+      - name: Build el8 builder image
+        if: ${{ 'skipped' != steps.commit_changes.conclusion }}
+        id: build_el8_image
+        run: docker-compose -f "docker-compose8.yml" build superbuilder
+
+      - name: Build el8 RPM
+        if: ${{ 'skipped' != steps.build_el8_image.conclusion }}
+        id: build_el8_rpm
+        run: |
+          docker-compose -f "docker-compose8.yml" run superbuilder ./rebuildit8
+          #find SRPMS -type f -name '*.rpm' 
+          srpm_path=$(find SRPMS -type f -name '*.el8.nosrc.rpm' | head -n1)
+          srpm_name=$(basename "$srpm_path")
+          #find RPMS -type f -name '*.rpm'
+          rpm_path=$(find RPMS -type f -name '*.el8.x86_64.rpm' | head -n1)
+          rpm_name=$(basename "$rpm_path")
+          echo ======================================
+          declare -p {s,}rpm_{path,name}
+          echo ======================================
+          echo "srpm_path=$srpm_path" >> $GITHUB_OUTPUT
+          echo "srpm_name=$srpm_name" >> $GITHUB_OUTPUT
+          echo "rpm_path=$rpm_path" >> $GITHUB_OUTPUT
+          echo "rpm_name=$rpm_name" >> $GITHUB_OUTPUT
+
+      - name: Test el8 RPM
+        if: ${{ 'skipped' != steps.build_el8_rpm.conclusion }}
+        id: test_el8_rpm
+        run: docker-compose -f "docker-compose8.yml" run tester ./retestit8
+
+      - name: Save bad el8 RPMs
+        if: ${{ 'failure' == steps.test_el8_rpm.conclusion }}
+        uses: actions/upload-artifact@v3
+        with:
+          name: rpms
+          path: "*RPMS**/*.rpm"
+          if-no-files-found: error
+
+      - name: Tag for release
+        if: ${{ 'skipped' != steps.test_el8_rpm.conclusion }}
+        id: tag_for_release
+        run: |
+          tag=v${AWS_CLI_VERSION}-${AWSCLIV2_RPM_RELEASE}-${AWSCLIV2_RPM_RELEASE_DATE}
+          echo $tag
+          echo "tag=$tag" >> $GITHUB_OUTPUT
+          git fetch -v --all --prune --prune-tags
+          git checkout "$BASE_REF"
+          git pull --ff-only
+          git tag -a -F awscliv2-rpm-details.txt "$tag"
+          git push --tags
+
+      - name: Create release
+        if: ${{ 'skipped' != steps.create_release.conclusion }}
+        id: create_release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ steps.tag_for_release.outputs.tag }}
+          name: Release ${{ steps.tag_for_release.outputs.tag }}
+          body_path: awscliv2-rpm-details.txt
+          files: |
+            ${{ steps.build_el7_rpm.outputs.rpm_path }}
+            ${{ steps.build_el8_rpm.outputs.rpm_path }}
+            ${{ steps.build_el8_rpm.outputs.srpm_path }}
+            ${{ steps.build_el7_rpm.outputs.srpm_path }}

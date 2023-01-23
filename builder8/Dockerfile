@@ -1,11 +1,11 @@
 ARG build_as_root=no
 
-FROM centos:7 AS base
-RUN yum -y install \
+FROM almalinux:8 AS base
+RUN dnf -y install \
     rpmdevtools \
     rpmlint
 # for copying between host and container
-RUN yum -y install \
+RUN dnf -y install \
     rsync
 
 FROM base AS build_as_root_yes
