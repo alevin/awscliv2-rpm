@@ -48,8 +48,8 @@ jobs:
         if: ${{ 'yes' == steps.check_for_changes.outputs.installer_has_changed }}
         id: commit_changes
         uses: stefanzweifel/git-auto-commit-action@v4
-        with:
-         commit_options: "--file awscliv2-rpm-details.txt"
+      #  with:
+      #   commit_options: "--file awscliv2-rpm-details.txt"
       #  run: |
       #    git commit --file awscliv2-rpm-details.txt
       #    git push
