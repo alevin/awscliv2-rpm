@@ -1,10 +1,11 @@
 name: Release new RPM
 
 on:
-  workflow_dispatch:
-  schedule:
-    - cron: "15 18 * * *"
-
+  #workflow_dispatch:
+  #schedule:
+  #  - cron: "15 18 * * *"
+  push:
+    branches: [ main ]
 jobs:
   all:
     runs-on: ubuntu-20.04
