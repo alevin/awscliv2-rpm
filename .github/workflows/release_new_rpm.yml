@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Configure git for commit
         run: |
@@ -79,7 +79,7 @@ jobs:
 
       - name: Save bad RPMs
         if: ${{ 'failure' == steps.test_rpm.conclusion }}
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: rpms
           path: "*RPMS**/*.rpm"
@@ -102,7 +102,7 @@ jobs:
         id: create_release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        uses: actions/create-release@v1
+        uses: actions/create-release@v3
         with:
           tag_name: ${{ steps.tag_for_release.outputs.tag }}
           release_name: Release ${{ steps.tag_for_release.outputs.tag }}
@@ -113,7 +113,7 @@ jobs:
         id: upload-srpm-to-release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        uses: actions/upload-release-asset@v1
+        uses: actions/upload-release-asset@v3
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: ${{ steps.build_rpm.outputs.srpm_path }}
@@ -125,7 +125,7 @@ jobs:
         id: upload-rpm-to-release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        uses: actions/upload-release-asset@v1
+        uses: actions/upload-release-asset@v3
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: ${{ steps.build_rpm.outputs.rpm_path }}
