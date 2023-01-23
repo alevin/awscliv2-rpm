@@ -40,7 +40,8 @@ jobs:
         run: |
           if ! git diff --cached --name-status --exit-code
           then
-            echo "::set-output name=installer_has_changed::yes"
+            #echo "::set-output name=installer_has_changed::yes"
+            echo "installer_has_changed=yes" >> $GITHUB_OUTPUT
           fi
 
       #- name: Push updated installer details
@@ -67,10 +68,15 @@ jobs:
           echo ======================================
           declare -p {s,}rpm_{path,name}
           echo ======================================
-          echo "::set-output name=srpm_path::$srpm_path"
-          echo "::set-output name=srpm_name::$srpm_name"
-          echo "::set-output name=rpm_path::$rpm_path"
-          echo "::set-output name=rpm_name::$rpm_name"
+          #echo "::set-output name=srpm_path::$srpm_path"
+          #echo "::set-output name=srpm_name::$srpm_name"
+          #echo "::set-output name=rpm_path::$rpm_path"
+          #echo "::set-output name=rpm_name::$rpm_name"
+          echo "srpm_path=$srpm_path" >> $GITHUB_OUTPUT
+          echo "srpm_name=$srpm_name" >> $GITHUB_OUTPUT
+          echo "rpm_path=$rpm_path" >> $GITHUB_OUTPUT
+          echo "rpm_name=$rpm_name" >> $GITHUB_OUTPUT
+
 
       - name: Test RPM
         if: ${{ 'skipped' != steps.build_rpm.conclusion }}
