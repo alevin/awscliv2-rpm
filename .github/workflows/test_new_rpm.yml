@@ -1,4 +1,4 @@
-name: Release new RPM
+name: test new RPM
 
 on:
   #workflow_dispatch:
@@ -43,12 +43,12 @@ jobs:
             echo "::set-output name=installer_has_changed::yes"
           fi
 
-      - name: Push updated installer details
-        if: ${{ 'yes' == steps.check_for_changes.outputs.installer_has_changed }}
-        id: commit_changes
-        run: |
-          git commit --file awscliv2-rpm-details.txt
-          git push
+      #- name: Push updated installer details
+      #  if: ${{ 'yes' == steps.check_for_changes.outputs.installer_has_changed }}
+      #  id: commit_changes
+      #  run: |
+      #    git commit --file awscliv2-rpm-details.txt
+      #    git push
 
       - name: Build builder image
         if: ${{ 'skipped' != steps.commit_changes.conclusion }}
