@@ -54,7 +54,7 @@ jobs:
         # commit_options: "--file awscliv2-rpm-details.txt"
         run: |
           git commit --file awscliv2-rpm-details.txt
-          git push
+        #  git push
 
       - name: Build builder image
         if: ${{ 'skipped' != steps.commit_changes.conclusion }}
