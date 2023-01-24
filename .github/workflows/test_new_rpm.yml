@@ -102,7 +102,8 @@ jobs:
         id: tag_for_release
         run: |
           tag=v${AWS_CLI_VERSION}-${AWSCLIV2_RPM_RELEASE}
-          echo "::set-output name=tag::$tag"
+          #echo "::set-output name=tag::$tag"
+          echo "tag=$tag" >> $GITHUB_OUTPUT
           git fetch -v --all --prune --prune-tags
           git checkout "$BASE_REF"
           git pull --ff-only
@@ -114,7 +115,7 @@ jobs:
         id: create_release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        uses: actions/create-release@v1
+        uses: actions/create-release@v2
         with:
           tag_name: ${{ steps.tag_for_release.outputs.tag }}
           release_name: Release ${{ steps.tag_for_release.outputs.tag }}
@@ -125,7 +126,7 @@ jobs:
         id: upload-srpm-to-release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        uses: actions/upload-release-asset@v1
+        uses: actions/upload-release-asset@v2
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: ${{ steps.build_rpm.outputs.srpm_path }}
@@ -137,7 +138,7 @@ jobs:
         id: upload-rpm-to-release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        uses: actions/upload-release-asset@v1
+        uses: actions/upload-release-asset@v2
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: ${{ steps.build_rpm.outputs.rpm_path }}
