@@ -1,0 +1,20 @@
+version: "3"
+services:
+  builder:
+    build: ./builder
+    volumes:
+      - .:/work
+    working_dir: /work
+  superbuilder:
+    build:
+      context: ./builder8
+      args:
+        build_as_root: "yes"
+    volumes:
+      - .:/work
+    working_dir: /work
+  tester:
+    image: almalinux:8
+    volumes:
+      - .:/work
+    working_dir: /work
