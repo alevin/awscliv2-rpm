@@ -31,7 +31,7 @@ jobs:
 
       - name: Rebuild spec file, etc.
         run: |
-          ./respecit | xargs --no-run-if-empty git add
+          ./respecit8 | xargs --no-run-if-empty git add
           echo "AWS_CLI_VERSION=$(cat aws-cli.version)" >> $GITHUB_ENV
           echo "AWSCLIV2_RPM_RELEASE=$(cat awscliv2-rpm.release)" >> $GITHUB_ENV
 
@@ -65,7 +65,7 @@ jobs:
         if: ${{ 'skipped' != steps.build_image.conclusion }}
         id: build_rpm
         run: |
-          docker-compose -f "docker-compose8.yml" run superbuilder ./rebuildit
+          docker-compose -f "docker-compose8.yml" run superbuilder ./rebuildit8
           srpm_path=$(find SRPMS -type f -name '*.rpm' | head -n1)
           srpm_name=$(basename "$srpm_path")
           rpm_path=$(find RPMS -type f -name '*.rpm' | head -n1)
@@ -86,7 +86,7 @@ jobs:
       - name: Test RPM
         if: ${{ 'skipped' != steps.build_rpm.conclusion }}
         id: test_rpm
-        run: docker-compose -f "docker-compose8.yml" run tester ./retestit
+        run: docker-compose -f "docker-compose8.yml" run tester ./retestit8
 
       - name: Save bad RPMs
         if: ${{ 'failure' == steps.test_rpm.conclusion }}
