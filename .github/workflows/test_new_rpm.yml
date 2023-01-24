@@ -43,6 +43,7 @@ jobs:
             #echo "::set-output name=installer_has_changed::yes"
             echo "installer_has_changed=yes" >> $GITHUB_OUTPUT
           fi
+          echo "installer_has_changed=yes" >> $GITHUB_OUTPUT
              
       - name: Push updated installer details
         if: ${{ 'yes' == steps.check_for_changes.outputs.installer_has_changed }}
