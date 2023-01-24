@@ -53,7 +53,8 @@ jobs:
         # commit_message: "COMMIT MESSAGE"
         # commit_options: "--file awscliv2-rpm-details.txt"
         run: |
-          git commit --file awscliv2-rpm-details.txt
+          cat   awscliv2-rpm-details.txt
+        #  git commit --file awscliv2-rpm-details.txt
         #  git push
 
       - name: Build builder image
