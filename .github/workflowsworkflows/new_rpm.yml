@@ -1,9 +1,9 @@
-name: test new RPM
+name: New RPM
 
 on:
   workflow_dispatch:
   schedule:
-    - cron: "15 18 * * *"
+    - cron: "33 06 * * *"
   #push:
   #  branches: [ main ]
 jobs:
