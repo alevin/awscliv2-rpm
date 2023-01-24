@@ -3,7 +3,7 @@ name: New RPM
 on:
   workflow_dispatch:
   schedule:
-    - cron: "33 06 * * *"
+    - cron: "43 06 * * *"
   #push:
   #  branches: [ main ]
 jobs:
