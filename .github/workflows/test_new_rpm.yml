@@ -1,11 +1,11 @@
 name: test new RPM
 
 on:
-  #workflow_dispatch:
-  #schedule:
-  #  - cron: "15 18 * * *"
-  push:
-    branches: [ main ]
+  workflow_dispatch:
+  schedule:
+    - cron: "15 18 * * *"
+  #push:
+  #  branches: [ main ]
 jobs:
   all:
     runs-on: ubuntu-20.04
@@ -40,10 +40,9 @@ jobs:
         run: |
           if ! git diff --cached --name-status --exit-code
           then
-            #echo "::set-output name=installer_has_changed::yes"
             echo "installer_has_changed=yes" >> $GITHUB_OUTPUT
           fi
-          echo "installer_has_changed=yes" >> $GITHUB_OUTPUT
+          #echo "installer_has_changed=yes" >> $GITHUB_OUTPUT
              
       - name: Push updated installer details
         if: ${{ 'yes' == steps.check_for_changes.outputs.installer_has_changed }}
@@ -53,9 +52,9 @@ jobs:
         # commit_message: "COMMIT MESSAGE"
         # commit_options: "--file awscliv2-rpm-details.txt"
         run: |
-          cat   awscliv2-rpm-details.txt
-        #  git commit --file awscliv2-rpm-details.txt
-        #  git push
+          #cat   awscliv2-rpm-details.txt
+          git commit --file awscliv2-rpm-details.txt
+          git push
 
       - name: Build builder image
         if: ${{ 'skipped' != steps.commit_changes.conclusion }}
