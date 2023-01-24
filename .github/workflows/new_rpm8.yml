@@ -1,4 +1,4 @@
-name: New RPM
+name: New el8 RPM
 
 on:
   workflow_dispatch:
@@ -52,9 +52,9 @@ jobs:
         # commit_message: "COMMIT MESSAGE"
         # commit_options: "--file awscliv2-rpm-details.txt"
         run: |
-          #cat   awscliv2-rpm-details.txt
-          git commit --file awscliv2-rpm-details.txt
-          git push
+          cat   awscliv2-rpm-details.txt
+          #git commit --file awscliv2-rpm-details.txt
+          #git push
 
       - name: Build builder image
         if: ${{ 'skipped' != steps.commit_changes.conclusion }}
