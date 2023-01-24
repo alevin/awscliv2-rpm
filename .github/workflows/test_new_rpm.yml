@@ -13,16 +13,16 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      #- name: Configure git for commit
-      #  run: |
-      #    git config user.name "$GITHUB_ACTOR"
-      #    git config user.email "${GITHUB_REPOSITORY//\//+}+${GITHUB_WORKFLOW// /-}@github.io"
-      #    if [ -n "$GITHUB_BASE_REF" ]
-      #    then
-      #      echo "BASE_REF=$GITHUB_BASE_REF" >> $GITHUB_ENV
-      #    else
-      #      echo "BASE_REF=${GITHUB_REF#refs/heads/}" >> $GITHUB_ENV
-      #    fi
+      - name: Configure git for commit
+        run: |
+          git config user.name "$GITHUB_ACTOR"
+          git config user.email "${GITHUB_REPOSITORY//\//+}+${GITHUB_WORKFLOW// /-}@github.io"
+          if [ -n "$GITHUB_BASE_REF" ]
+          then
+            echo "BASE_REF=$GITHUB_BASE_REF" >> $GITHUB_ENV
+          else
+            echo "BASE_REF=${GITHUB_REF#refs/heads/}" >> $GITHUB_ENV
+          fi
 
       - name: Check for new installer
         run: |
@@ -52,13 +52,13 @@ jobs:
       - name: Push updated installer details
         if: ${{ 'yes' == steps.check_for_changes.outputs.installer_has_changed }}
         id: commit_changes
-        uses: stefanzweifel/git-auto-commit-action@v4
-        with:
-          commit_message: "$COMMIT_MESSAGE"
-      #   commit_options: "--file awscliv2-rpm-details.txt"
-      #  run: |
-      #    git commit --file awscliv2-rpm-details.txt
-      #    git push
+        #uses: stefanzweifel/git-auto-commit-action@v4
+        #with:
+        # commit_message: "$COMMIT_MESSAGE"
+        # commit_options: "--file awscliv2-rpm-details.txt"
+        run: |
+          git commit --file awscliv2-rpm-details.txt
+          git push
 
       - name: Build builder image
         if: ${{ 'skipped' != steps.commit_changes.conclusion }}
