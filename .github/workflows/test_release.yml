@@ -52,14 +52,15 @@ jobs:
           git commit --file awscliv2-rpm-details.txt || true
           git push
 
-      - name: Build builder image
+        # el7
+
+      - name: Build el7 builder image
         if: ${{ 'skipped' != steps.commit_changes.conclusion }}
-        id: build_image
+        id: build_el7_image
         run: docker-compose build superbuilder
 
-        # el7
       - name: Build el7 RPM
-        if: ${{ 'skipped' != steps.build_image.conclusion }}
+        if: ${{ 'skipped' != steps.build_el7_image.conclusion }}
         id: build_el7_rpm
         run: |
           docker-compose run superbuilder ./rebuildit
@@ -90,11 +91,16 @@ jobs:
           if-no-files-found: error
 
         # el8
+      - name: Build el8 builder image
+        if: ${{ 'skipped' != steps.commit_changes.conclusion }}
+        id: build_el8_image
+        run: docker-compose build superbuilder8
+
       - name: Build el8 RPM
-        if: ${{ 'skipped' != steps.build_image.conclusion }}
+        if: ${{ 'skipped' != steps.build_el8_image.conclusion }}
         id: build_el8_rpm
         run: |
-          docker-compose run superbuilder ./rebuildit
+          docker-compose run superbuilder8 ./rebuildit
           srpm_path=$(find SRPMS -type f -name '*.rpm' | head -n1)
           srpm_name=$(basename "$srpm_path")
           rpm_path=$(find RPMS -type f -name '*.rpm' | head -n1)
