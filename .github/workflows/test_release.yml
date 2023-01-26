@@ -49,7 +49,7 @@ jobs:
         if: ${{ 'yes' == steps.check_for_changes.outputs.installer_has_changed }}
         id: commit_changes
         run: |
-          git commit --file awscliv2-rpm-details.txt
+          git commit --file awscliv2-rpm-details.txt || true
           git push
 
       - name: Build builder image
