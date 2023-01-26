@@ -42,7 +42,7 @@ jobs:
           then
             echo "installer_has_changed=yes" >> $GITHUB_OUTPUT
           fi
-          # force rebuild
+          # Force rebuild
           echo "installer_has_changed=yes" >> $GITHUB_OUTPUT
              
       - name: Push updated installer details
