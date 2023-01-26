@@ -5,9 +5,9 @@ services:
     volumes:
       - .:/work
     working_dir: /work
-  superbuilder:
+  superbuilder8:
     build:
-      context: ./builder8
+      context: ./builder
       args:
         build_as_root: "yes"
     volumes:
