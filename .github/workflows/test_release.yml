@@ -73,10 +73,6 @@ jobs:
           echo ======================================
           declare -p {s,}rpm_{path,name}
           echo ======================================
-          #echo "::set-output name=srpm_path::$srpm_path"
-          #echo "::set-output name=srpm_name::$srpm_name"
-          #echo "::set-output name=rpm_path::$rpm_path"
-          #echo "::set-output name=rpm_name::$rpm_name"
           echo "srpm_path=$srpm_path" >> $GITHUB_OUTPUT
           echo "srpm_name=$srpm_name" >> $GITHUB_OUTPUT
           echo "rpm_path=$rpm_path" >> $GITHUB_OUTPUT
@@ -101,7 +97,6 @@ jobs:
         id: tag_for_release
         run: |
           tag=v${AWS_CLI_VERSION}-${AWSCLIV2_RPM_RELEASE}-${AWSCLIV2_RPM_RELEASE_DATE=}
-          #echo "::set-output name=tag::$tag"
           echo "tag=$tag" >> $GITHUB_OUTPUT
           git fetch -v --all --prune --prune-tags
           git checkout "$BASE_REF"
@@ -114,7 +109,7 @@ jobs:
         id: create_release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        uses: actions/create-release@v1
+        uses: actions/create-release@v2
         with:
           tag_name: ${{ steps.tag_for_release.outputs.tag }}
           release_name: Release ${{ steps.tag_for_release.outputs.tag }}
