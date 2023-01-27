@@ -2,8 +2,8 @@ name: New RPM
 
 on:
   workflow_dispatch:
-  schedule:
-    - cron: "43 16 * * *"
+  #schedule:
+  #  - cron: "43 16 * * *"
   #push:
   #  branches: [ main ]
 jobs:
