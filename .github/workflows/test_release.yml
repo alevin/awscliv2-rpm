@@ -66,7 +66,7 @@ jobs:
           docker-compose run superbuilder ./rebuildit
           srpm_path=$(find SRPMS -type f -name '*.el7.nosrc.rpm' | head -n1)
           srpm_name=$(basename "$srpm_path")
-          rpm_path=$(find RPMS -type f -name '*.el8.x86_64.rpm' | head -n1)
+          rpm_path=$(find RPMS -type f -name '*.el7.x86_64.rpm' | head -n1)
           rpm_name=$(basename "$rpm_path")
           echo ======================================
           declare -p {s,}rpm_{path,name}
