@@ -1,6 +1,5 @@
 ARG build_as_root=no
 
-
 FROM almalinux:8 AS base
 RUN dnf -y install \
     rpmdevtools \
@@ -9,16 +8,13 @@ RUN dnf -y install \
 RUN dnf -y install \
     rsync
 
-
 FROM base AS build_as_root_yes
 WORKDIR /root
-
 
 FROM base AS build_as_root_no
 RUN useradd builder
 USER builder
 WORKDIR /home/builder
-
 
 FROM build_as_root_${build_as_root}
 RUN rpmdev-setuptree
