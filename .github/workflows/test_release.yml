@@ -131,8 +131,7 @@ jobs:
         if: ${{ 'skipped' != steps.test_el8_rpm.conclusion }}
         id: tag_for_release
         run: |
-          #tag=v${AWS_CLI_VERSION}-${AWSCLIV2_RPM_RELEASE}-${AWSCLIV2_RPM_RELEASE_DATE}
-          tag=v${AWS_CLI_VERSION}-${AWSCLIV2_RPM_RELEASE_DATE}
+          tag=v${AWS_CLI_VERSION}-${AWSCLIV2_RPM_RELEASE}-${AWSCLIV2_RPM_RELEASE_DATE}
           echo $tag
           echo "tag=$tag" >> $GITHUB_OUTPUT
           git fetch -v --all --prune --prune-tags
@@ -156,62 +155,3 @@ jobs:
             ${{ steps.build_el8_rpm.outputs.rpm_path }}
             ${{ steps.build_el8_rpm.outputs.srpm_path }}
             ${{ steps.build_el7_rpm.outputs.srpm_path }}
-
-      # - name: Create release
-      #   if: ${{ 'skipped' != steps.tag_for_release.conclusion }}
-      #   id: create_release
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      #   uses: actions/create-release@v1
-      #   with:
-      #     tag_name: ${{ steps.tag_for_release.outputs.tag }}
-      #     release_name: Release ${{ steps.tag_for_release.outputs.tag }}
-      #     body_path: awscliv2-rpm-details.txt
-
-      # - name: Upload el7  SRPM to release
-      #   if: ${{ 'skipped' != steps.create_release.conclusion }}
-      #   id: upload-el7-srpm-to-release
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      #   uses: actions/upload-release-asset@v1
-      #   with:
-      #     upload_url: ${{ steps.create_release.outputs.upload_url }}
-      #     asset_path: ${{ steps.build_el7_rpm.outputs.srpm_path }}
-      #     asset_name: ${{ steps.build_el7_rpm.outputs.srpm_name }}
-      #     asset_content_type: application/x-rpm
-
-      # - name: Upload el8  SRPM to release
-      #   if: ${{ 'skipped' != steps.create_release.conclusion }}
-      #   id: upload-el8-srpm-to-release
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      #   uses: actions/upload-release-asset@v1
-      #   with:
-      #     upload_url: ${{ steps.create_release.outputs.upload_url }}
-      #     asset_path: ${{ steps.build_el8_rpm.outputs.srpm_path }}
-      #     asset_name: ${{ steps.build_el8_rpm.outputs.srpm_name }}
-      #     asset_content_type: application/x-rpm
-
-      # - name: Upload el7 RPM to release
-      #   if: ${{ 'skipped' != steps.create_release.conclusion }}
-      #   id: upload-el7-rpm-to-release
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      #   uses: actions/upload-release-asset@v1
-      #   with:
-      #     upload_url: ${{ steps.create_release.outputs.upload_url }}
-      #     asset_path: ${{ steps.build_el7_rpm.outputs.rpm_path }}
-      #     asset_name: ${{ steps.build_el7_rpm.outputs.rpm_name }}
-      #     asset_content_type: application/x-rpm
-
-      # - name: Upload el8 RPM to release
-      #   if: ${{ 'skipped' != steps.create_release.conclusion }}
-      #   id: upload-el8-rpm-to-release
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      #   uses: actions/upload-release-asset@v1
-      #   with:
-      #     upload_url: ${{ steps.create_release.outputs.upload_url }}
-      #     asset_path: ${{ steps.build_el8_rpm.outputs.rpm_path }}
-      #     asset_name: ${{ steps.build_el8_rpm.outputs.rpm_name }}
-      #     asset_content_type: application/x-rpm
