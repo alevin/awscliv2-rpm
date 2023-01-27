@@ -101,8 +101,10 @@ jobs:
         id: build_el8_rpm
         run: |
           docker-compose -f "docker-compose8.yml" run superbuilder ./rebuildit8
+          find SRPMS -type f -name '*.rpm' 
           srpm_path=$(find SRPMS -type f -name '*.rpm' | head -n1)
           srpm_name=$(basename "$srpm_path")
+          find RPMS -type f -name '*.rpm'
           rpm_path=$(find RPMS -type f -name '*.rpm' | head -n1)
           rpm_name=$(basename "$rpm_path")
           echo ======================================
