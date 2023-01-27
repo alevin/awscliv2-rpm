@@ -1,13 +1,13 @@
 version: "3"
 services:
   builder:
-    build: ./builder
+    build: ./builder8
     volumes:
       - .:/work
     working_dir: /work
   superbuilder:
     build:
-      context: ./builder
+      context: ./builder8
       args:
         build_as_root: "yes"
     volumes:
