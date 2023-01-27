@@ -99,3 +99,32 @@ rpm --test -ivh ./RPMS/${arch}/${name}-${version}-${release}.el7.${arch}.rpm
 rpm -ivh ./RPMS/${arch}/${name}-${version}-${release}.el7.${arch}.rpm
 aws --version
 EOF
+
+
+respec rebuildit8 <<EOF
+#!/bin/bash
+set -euo pipefail
+
+sha256sum -c awscli-exe-linux-${arch}.zip.sha256
+
+rpmlint ${name}.spec
+
+# create nosrc rpm
+rsync -ai awscli-exe-linux-${arch}.zip{,.sha256} $HOME/rpmbuild/SOURCES/
+rpmbuild -bs ${name}.spec
+rsync -ai $HOME/rpmbuild/SRPMS/ ./SRPMS/
+
+# create binary rpm
+rpm -Uvh ./SRPMS/${name}-${version}-${release}.el8.nosrc.rpm
+rpmbuild -ba ~/rpmbuild/SPECS/${name}.spec
+rsync -ai $HOME/rpmbuild/RPMS/ ./RPMS/
+EOF
+
+respec retestit8 <<EOF
+#!/bin/bash
+set -euo pipefail
+
+rpm --test -ivh ./RPMS/${arch}/${name}-${version}-${release}.el8.${arch}.rpm
+rpm -ivh ./RPMS/${arch}/${name}-${version}-${release}.el8.${arch}.rpm
+aws --version
+EOF
