@@ -94,13 +94,13 @@ jobs:
       - name: Build el8 builder image
         if: ${{ 'skipped' != steps.commit_changes.conclusion }}
         id: build_el8_image
-        run: docker-compose build superbuilder
+        run: docker-compose build superbuilder8
 
       - name: Build el8 RPM
         if: ${{ 'skipped' != steps.build_el8_image.conclusion }}
         id: build_el8_rpm
         run: |
-          docker-compose run superbuilder ./rebuildit
+          docker-compose run superbuilder8 ./rebuildit
           srpm_path=$(find SRPMS -type f -name '*.rpm' | head -n1)
           srpm_name=$(basename "$srpm_path")
           rpm_path=$(find RPMS -type f -name '*.rpm' | head -n1)
