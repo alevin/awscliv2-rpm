@@ -141,16 +141,34 @@ jobs:
           git tag -a -F awscliv2-rpm-details.txt "$tag"
           git push --tags
 
-      - name: Create release
-        if: ${{ 'skipped' != steps.tag_for_release.conclusion }}
+
+      - name: Release
+        if: ${{ 'skipped' != steps.create_release.conclusion }}
         id: create_release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        uses: actions/create-release@v1
+        uses:
+          softprops/action-gh-release@v1
         with:
           tag_name: ${{ steps.tag_for_release.outputs.tag }}
-          release_name: Release ${{ steps.tag_for_release.outputs.tag }}
+          name: Release ${{ steps.tag_for_release.outputs.tag }}
           body_path: awscliv2-rpm-details.txt
+          files: |
+            ${{ steps.build_el7_rpm.outputs.rpm_path }}
+            ${{ steps.build_el8_rpm.outputs.rpm_path }}
+            ${{ steps.build_el8_rpm.outputs.srpm_path }}
+            ${{ steps.build_el7_rpm.outputs.srpm_path }}
+
+      # - name: Create release
+      #   if: ${{ 'skipped' != steps.tag_for_release.conclusion }}
+      #   id: create_release
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #   uses: actions/create-release@v1
+      #   with:
+      #     tag_name: ${{ steps.tag_for_release.outputs.tag }}
+      #     release_name: Release ${{ steps.tag_for_release.outputs.tag }}
+      #     body_path: awscliv2-rpm-details.txt
 
       # - name: Upload el7  SRPM to release
       #   if: ${{ 'skipped' != steps.create_release.conclusion }}
@@ -200,15 +218,3 @@ jobs:
       #     asset_name: ${{ steps.build_el8_rpm.outputs.rpm_name }}
       #     asset_content_type: application/x-rpm
 
-      - name: Upload to release
-        if: ${{ 'skipped' != steps.create_release.conclusion }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        uses:
-          softprops/action-gh-release@v1
-        with:
-          files: |
-            ${{ steps.build_el7_rpm.outputs.rpm_path }}
-            ${{ steps.build_el8_rpm.outputs.rpm_path }}
-            ${{ steps.build_el8_rpm.outputs.srpm_path }}
-            ${{ steps.build_el7_rpm.outputs.srpm_path }}
