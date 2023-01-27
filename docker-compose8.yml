@@ -13,7 +13,7 @@ services:
     volumes:
       - .:/work
     working_dir: /work
-  tester:
+  tester8:
     image: almalinux:8
     volumes:
       - .:/work
