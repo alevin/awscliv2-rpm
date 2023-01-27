@@ -94,13 +94,13 @@ jobs:
       - name: Build el8 builder image
         if: ${{ 'skipped' != steps.commit_changes.conclusion }}
         id: build_el8_image
-        run: docker-compose8 build superbuilder8
+        run: docker-compose -f "docker-compose8.yml" build superbuilder8
 
       - name: Build el8 RPM
         if: ${{ 'skipped' != steps.build_el8_image.conclusion }}
         id: build_el8_rpm
         run: |
-          docker-compose8 run superbuilder8 ./rebuildit
+          docker-compose -f "docker-compose8.yml" run superbuilder8 ./rebuildit
           srpm_path=$(find SRPMS -type f -name '*.rpm' | head -n1)
           srpm_name=$(basename "$srpm_path")
           rpm_path=$(find RPMS -type f -name '*.rpm' | head -n1)
@@ -117,7 +117,7 @@ jobs:
       - name: Test el8 RPM
         if: ${{ 'skipped' != steps.build_el8_rpm.conclusion }}
         id: test_el8_rpm
-        run: docker-compose8 run tester8 ./retestit
+        run: docker-compose -f "docker-compose8.yml" run tester8 ./retestit
 
       - name: Save bad el8 RPMs
         if: ${{ 'failure' == steps.test_el8_rpm.conclusion }}
