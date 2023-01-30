@@ -141,7 +141,7 @@ jobs:
           git push --tags
 
       - name: Create release
-        if: ${{ 'skipped' != steps.create_release.conclusion }}
+        if: ${{ 'skipped' != steps.tag_for_release.conclusion }}
         id: create_release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
