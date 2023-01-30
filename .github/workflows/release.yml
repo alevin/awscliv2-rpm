@@ -132,8 +132,9 @@ jobs:
         id: tag_for_release
         run: |
           tag=v${AWS_CLI_VERSION}-${AWSCLIV2_RPM_RELEASE}-${AWSCLIV2_RPM_RELEASE_DATE}
-          echo $tag
+          name="${AWS_CLI_VERSION}-${AWSCLIV2_RPM_RELEASE} ${AWSCLIV2_RPM_RELEASE_DATE}"
           echo "tag=$tag" >> $GITHUB_OUTPUT
+          echo "name=$name" >> $GITHUB_OUTPUT
           git fetch -v --all --prune --prune-tags
           git checkout "$BASE_REF"
           git pull --ff-only
@@ -148,7 +149,7 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           tag_name: ${{ steps.tag_for_release.outputs.tag }}
-          name: Release ${{ steps.tag_for_release.outputs.tag }}
+          name: Release ${{ steps.tag_for_release.outputs.name }}
           body_path: awscliv2-rpm-details.txt
           files: |
             ${{ steps.build_el7_rpm.outputs.rpm_path }}
