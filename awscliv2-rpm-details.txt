@@ -1,4 +1,4 @@
-aws-cli version: 2.15.16
+aws-cli version: 2.15.17
 awscliv2 release: 1
 
-https://github.com/aws/aws-cli/blob/v2/CHANGELOG.rst#21516
+https://github.com/aws/aws-cli/blob/v2/CHANGELOG.rst#21517
