@@ -54,40 +54,40 @@ jobs:
 
         # el7
 
-      - name: Build el7 builder image
-        if: ${{ 'skipped' != steps.commit_changes.conclusion }}
-        id: build_el7_image
-        run: docker-compose build superbuilder
+      # - name: Build el7 builder image
+      #   if: ${{ 'skipped' != steps.commit_changes.conclusion }}
+      #   id: build_el7_image
+      #   run: docker-compose build superbuilder
 
-      - name: Build el7 RPM
-        if: ${{ 'skipped' != steps.build_el7_image.conclusion }}
-        id: build_el7_rpm
-        run: |
-          docker-compose run superbuilder ./rebuildit
-          srpm_path=$(find SRPMS -type f -name '*.el7.nosrc.rpm' | head -n1)
-          srpm_name=$(basename "$srpm_path")
-          rpm_path=$(find RPMS -type f -name '*.el7.x86_64.rpm' | head -n1)
-          rpm_name=$(basename "$rpm_path")
-          echo ======================================
-          declare -p {s,}rpm_{path,name}
-          echo ======================================
-          echo "srpm_path=$srpm_path" >> $GITHUB_OUTPUT
-          echo "srpm_name=$srpm_name" >> $GITHUB_OUTPUT
-          echo "rpm_path=$rpm_path" >> $GITHUB_OUTPUT
-          echo "rpm_name=$rpm_name" >> $GITHUB_OUTPUT
+      # - name: Build el7 RPM
+      #   if: ${{ 'skipped' != steps.build_el7_image.conclusion }}
+      #   id: build_el7_rpm
+      #   run: |
+      #     docker-compose run superbuilder ./rebuildit
+      #     srpm_path=$(find SRPMS -type f -name '*.el7.nosrc.rpm' | head -n1)
+      #     srpm_name=$(basename "$srpm_path")
+      #     rpm_path=$(find RPMS -type f -name '*.el7.x86_64.rpm' | head -n1)
+      #     rpm_name=$(basename "$rpm_path")
+      #     echo ======================================
+      #     declare -p {s,}rpm_{path,name}
+      #     echo ======================================
+      #     echo "srpm_path=$srpm_path" >> $GITHUB_OUTPUT
+      #     echo "srpm_name=$srpm_name" >> $GITHUB_OUTPUT
+      #     echo "rpm_path=$rpm_path" >> $GITHUB_OUTPUT
+      #     echo "rpm_name=$rpm_name" >> $GITHUB_OUTPUT
 
-      - name: Test el7 RPM
-        if: ${{ 'skipped' != steps.build_el7_rpm.conclusion }}
-        id: test_el7_rpm
-        run: docker-compose run tester ./retestit
+      # - name: Test el7 RPM
+      #   if: ${{ 'skipped' != steps.build_el7_rpm.conclusion }}
+      #   id: test_el7_rpm
+      #   run: docker-compose run tester ./retestit
 
-      - name: Save bad el7 RPMs
-        if: ${{ 'failure' == steps.test_el7_rpm.conclusion }}
-        uses: actions/upload-artifact@v3
-        with:
-          name: rpms
-          path: "*RPMS**/*.rpm"
-          if-no-files-found: error
+      # - name: Save bad el7 RPMs
+      #   if: ${{ 'failure' == steps.test_el7_rpm.conclusion }}
+      #   uses: actions/upload-artifact@v3
+      #   with:
+      #     name: rpms
+      #     path: "*RPMS**/*.rpm"
+      #     if-no-files-found: error
 
         # el8
       - name: Build el8 builder image
