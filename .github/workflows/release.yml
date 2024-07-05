@@ -152,7 +152,5 @@ jobs:
           name: Release ${{ steps.tag_for_release.outputs.name }}
           body_path: awscliv2-rpm-details.txt
           files: |
-            ${{ steps.build_el7_rpm.outputs.rpm_path }}
             ${{ steps.build_el8_rpm.outputs.rpm_path }}
             ${{ steps.build_el8_rpm.outputs.srpm_path }}
-            ${{ steps.build_el7_rpm.outputs.srpm_path }}
