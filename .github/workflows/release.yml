@@ -57,13 +57,13 @@ jobs:
       # - name: Build el7 builder image
       #   if: ${{ 'skipped' != steps.commit_changes.conclusion }}
       #   id: build_el7_image
-      #   run: docker-compose build superbuilder
+      #   run: docker compose build superbuilder
 
       # - name: Build el7 RPM
       #   if: ${{ 'skipped' != steps.build_el7_image.conclusion }}
       #   id: build_el7_rpm
       #   run: |
-      #     docker-compose run superbuilder ./rebuildit
+      #     docker compose run superbuilder ./rebuildit
       #     srpm_path=$(find SRPMS -type f -name '*.el7.nosrc.rpm' | head -n1)
       #     srpm_name=$(basename "$srpm_path")
       #     rpm_path=$(find RPMS -type f -name '*.el7.x86_64.rpm' | head -n1)
@@ -79,7 +79,7 @@ jobs:
       # - name: Test el7 RPM
       #   if: ${{ 'skipped' != steps.build_el7_rpm.conclusion }}
       #   id: test_el7_rpm
-      #   run: docker-compose run tester ./retestit
+      #   run: docker compose run tester ./retestit
 
       # - name: Save bad el7 RPMs
       #   if: ${{ 'failure' == steps.test_el7_rpm.conclusion }}
@@ -93,13 +93,13 @@ jobs:
       - name: Build el8 builder image
         if: ${{ 'skipped' != steps.commit_changes.conclusion }}
         id: build_el8_image
-        run: docker-compose -f "docker-compose8.yml" build superbuilder
+        run: docker compose -f "docker-compose8.yml" build superbuilder
 
       - name: Build el8 RPM
         if: ${{ 'skipped' != steps.build_el8_image.conclusion }}
         id: build_el8_rpm
         run: |
-          docker-compose -f "docker-compose8.yml" run superbuilder ./rebuildit8
+          docker compose -f "docker-compose8.yml" run superbuilder ./rebuildit8
           #find SRPMS -type f -name '*.rpm' 
           srpm_path=$(find SRPMS -type f -name '*.el8.nosrc.rpm' | head -n1)
           srpm_name=$(basename "$srpm_path")
@@ -117,7 +117,7 @@ jobs:
       - name: Test el8 RPM
         if: ${{ 'skipped' != steps.build_el8_rpm.conclusion }}
         id: test_el8_rpm
-        run: docker-compose -f "docker-compose8.yml" run tester ./retestit8
+        run: docker compose -f "docker-compose8.yml" run tester ./retestit8
 
       - name: Save bad el8 RPMs
         if: ${{ 'failure' == steps.test_el8_rpm.conclusion }}
